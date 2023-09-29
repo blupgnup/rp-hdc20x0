@@ -1,4 +1,4 @@
-#include "C_HDC20X0.h"
+#include "rp-hdc20x0.h"
 #include <stdio.h>
 #include <unistd.h>
 

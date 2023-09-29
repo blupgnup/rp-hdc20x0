@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <time.h>
-#include "C_HDC20X0.h"
+#include "rp-hdc20x0.h"
 #include <unistd.h>				//Needed for I2C port
 #include <fcntl.h>				//
 #include <sys/ioctl.h>				//change slave
