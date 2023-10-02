@@ -23,8 +23,8 @@ static int file_i2c_handle =0;
 //registers addresses
 #define HDC20X0_TEMPERATURE_REGISTER           (0x00)
 #define HDC20X0_HUMIDITY_REGISTER              (0x02)
-#define HDC20X0_RESET_REGISTER                (0x0E)
-#define HDC20X0_CONFIG_REGISTER        (0x0F)
+#define HDC20X0_CONFIG_REGISTER                (0x0E)
+#define HDC20X0_MEAS_CONFIG_REGISTER        (0x0F)
 #define HDC20X0_MANUFACTURERID_REGISTER        (0xFC)
 #define HDC20X0_DEVICEID_REGISTER         (0xFE)
 
@@ -100,7 +100,7 @@ int setup_hdc20x0()
 	//
 	
 	uint8_t buff[4] = {};
-	buff[0] = HDC20X0_RESET_REGISTER; //register address
+	buff[0] = HDC20X0_CONFIG_REGISTER; //register address
 	buff[1] = HDC20X0_RESET_RESET_BIT;//set high bit enable to reset. 
 	if(write(file_i2c_handle, buff, 2) != 2)
 	{
@@ -123,7 +123,7 @@ int setup_hdc20x0()
 int read_from_hdc20x0(float* temperature, float* humidity)
 {
 	uint8_t buff[4] = {};
-	buff[0] = HDC20X0_CONFIG_REGISTER; 
+	buff[0] = HDC20X0_MEAS_CONFIG_REGISTER; 
 	buff[1] = HDC20X0_CONFIG_GO; 
 	if(write(file_i2c_handle, buff, 2) != 2)
 	{
