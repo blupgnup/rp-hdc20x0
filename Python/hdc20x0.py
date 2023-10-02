@@ -29,8 +29,7 @@ class Hdc20x0:
 
         def readManufacturerID(self):
             s = [HDC2000_MANUFACTURERID_REGISTER] 
-            s2 = bytearray( s )
-            HDC2000_fw.write( s2 )
+            HDC2000_fw.write( bytearray( s ) )
             time.sleep(0.0625)          
             data = HDC2000_fr.read(2) #read 2 byte config data
             buf = array.array('B', data)
@@ -38,8 +37,7 @@ class Hdc20x0:
 
         def readDeviceID(self):
             s = [HDC2000_DEVICEID_REGISTER] 
-            s2 = bytearray( s )
-            HDC2000_fw.write( s2 )
+            HDC2000_fw.write( bytearray( s ) )
             time.sleep(0.0625)              
             data = HDC2000_fr.read(2) #read 2 byte config data
             buf = array.array('B', data)
@@ -59,8 +57,7 @@ class Hdc20x0:
                 time.sleep(0.1) 
                 config = HDC2000_RESET_RESET_BIT
                 s = [HDC2000_RESET_REGISTER,config]
-                s2 = bytearray( s )
-                HDC2000_fw.write( s2 ) 
+                HDC2000_fw.write( bytearray( s ) ) 
                 time.sleep(0.1)             
                 if(self.readManufacturerID() != 0x4954):
                     print("ERROR CRITICAL MANUFACTURE ID NOT MATCH")
@@ -101,8 +98,7 @@ class Hdc20x0:
         
         def readConfigRegister(self):
                 s = [HDC2000_CONFIG_REGISTER] # temp
-                s2 = bytearray( s )
-                HDC2000_fw.write( s2 )
+                HDC2000_fw.write( bytearray( s ) )
                 data = HDC2000_fr.read(1) #read 2 byte config data
                 buf = array.array('B', data)
                 return buf[0]
