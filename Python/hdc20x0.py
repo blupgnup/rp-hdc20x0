@@ -83,7 +83,6 @@ class Hdc20x0:
                 cTemp = (temp / 65536.0) * 165.0 - 40
                 return cTemp
 
-
         def readHumidity(self):
                 s = [HDC20X0_MEAS_CONFIG_REGISTER, HDC20X0_MEAS_GO ]
                 HDC20X0_fw.write(bytearray(s)) #GO
@@ -110,7 +109,6 @@ class Hdc20x0:
                 buf = array.array('B', data)
                 return buf[0]
 
-       
         def turnHeaterOn(self):
                 config = readConfigRegister()
                 # Using OR so that we only activate the Heater bit
@@ -127,14 +125,34 @@ class Hdc20x0:
                 HDC20X0_fw.write( bytearray( s ) ) 
                 return
 
-        
-
         def setHumidityResolution(self,resolution):
-                # ToDo: implement function
+                config = readMeasConfigRegister()
+                # Setting resolution to default (High) because it is 0 for bits 7 and 6
+                config = config & (0xCF) # Using a mask 0b11001111
+                # Using Logic to update for medium or low resolution
+                if resolution == 'medium':
+                    config = config & (0x10)
+                elif resolution == 'low':
+                    config = config & (0x20)
+                # in case of error, we keep high resolution active
+                
+                s = [HDC20X0_MEAS_CONFIG_REGISTER,config]
+                HDC20X0_fw.write( bytearray( s ) ) 
                 return
 
         def setTemperatureResolution(self,resolution):
-                # ToDo: implement function
+                config = readMeasConfigRegister()
+                # Setting resolution to default (High) because it is 0 for bits 7 and 6
+                config = config & (0x3F) # Using a mask 0b00111111
+                # Using Logic to update for medium or low resolution
+                if resolution == 'medium':
+                    config = config & (0x40)
+                elif resolution == 'low':
+                    config = config & (0x80)
+                # in case of error, we keep high resolution active
+                
+                s = [HDC20X0_MEAS_CONFIG_REGISTER,config]
+                HDC20X0_fw.write( bytearray( s ) ) 
                 return
 
 
