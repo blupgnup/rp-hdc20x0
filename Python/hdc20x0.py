@@ -15,7 +15,7 @@ HDC20X0_DEVICEID_REGISTER =         (0xFE)
 #Configuration Register Bits
 
 HDC20X0_RESET_RESET_BIT =              (0x80)
-HDC20X0_RESET_HEATER_ENABLE =          (0x8)
+HDC20X0_HEATER_ENABLE =          (0x8)
 HDC20X0_CONFIG_GO =       (0x1)
 
 I2C_SLAVE=0x0703
@@ -97,19 +97,34 @@ class Hdc20x0:
                 return humidity
         
         def readConfigRegister(self):
+                s = [HDC20X0_CONFIG_REGISTER] # temp
+                HDC20X0_fw.write( bytearray( s ) )
+                data = HDC20X0_fr.read(1) #read 1 byte config data
+                buf = array.array('B', data)
+                return buf[0]
+        
+        def readMeasConfigRegister(self):
                 s = [HDC20X0_MEAS_CONFIG_REGISTER] # temp
                 HDC20X0_fw.write( bytearray( s ) )
-                data = HDC20X0_fr.read(1) #read 2 byte config data
+                data = HDC20X0_fr.read(1) #read 1 byte config data
                 buf = array.array('B', data)
                 return buf[0]
 
        
         def turnHeaterOn(self):
-                # ToDo: implement function
+                config = readConfigRegister()
+                # Using OR so that we only activate the Heater bit
+                config = config | HDC20X0_HEATER_ENABLE
+                s = [HDC20X0_CONFIG_REGISTER,config]
+                HDC20X0_fw.write( bytearray( s ) ) 
                 return
 
         def turnHeaterOff(self):
-                # ToDo: implement function
+                config = readConfigRegister()
+                # Using Logic so that we only deactivate the Heater bit
+                config = config & ~HDC20X0_HEATER_ENABLE
+                s = [HDC20X0_CONFIG_REGISTER,config]
+                HDC20X0_fw.write( bytearray( s ) ) 
                 return
 
         

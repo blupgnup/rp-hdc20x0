@@ -30,7 +30,7 @@ static int file_i2c_handle =0;
 
 //bit configuration we actually care about
 #define HDC20X0_RESET_RESET_BIT              (0x80)
-#define HDC20X0_RESET_HEATER_ENABLE           (0x8)
+#define HDC20X0_HEATER_ENABLE           (0x8)
 #define HDC20X0_CONFIG_GO        (0x1)
 
 #define NANO_MS_MULTIPLIER  1000000L;                // 1 millisecond = 1,000,000 Nanoseconds
