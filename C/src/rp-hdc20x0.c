@@ -56,6 +56,25 @@ int read_from_address(uint8_t address, uint16_t* recv)
 	return 0;
 }
 
+// private function, read register is similar to read from address but we get only one byte
+int read_register(uint8_t* recv)
+{
+	uint8_t buff[4] = {};
+	buff[0] = HDC20X0_CONFIG_REGISTER;
+	if(write(file_i2c_handle, buff, 1) != 1)
+	{
+		printf("Device failed to ACK the register address\n");
+		return -1;
+	}
+	if(read(file_i2c_handle,buff,1) != 1)
+	{
+		printf("Device failed to ACK the read -- maybe you are reading invalid register?\n");
+		return -2;
+	}
+	
+	*recv = buff[0]; // 8-bit value 
+	return 0;
+}
 
 
 //negative on error, positive on success
@@ -143,7 +162,7 @@ int read_from_hdc20x0(float* temperature, float* humidity)
 
 	if(read_from_address(HDC20X0_HUMIDITY_REGISTER,&humidity_raw )!=0)
 	{
-		printf("Unable to read temperature\n");
+		printf("Unable to read humidity\n");
 		return -3;
 	}
 
