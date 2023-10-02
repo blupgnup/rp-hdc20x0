@@ -1,63 +1,63 @@
 
 
 
-HDC2000_ADDRESS =                       (0x41)    # 01000001 
+HDC20X0_ADDRESS =                       (0x41)    # 01000001 
 # Register
 #2 bytes
-HDC2000_TEMPERATURE_REGISTER =          (0x00)
-HDC2000_HUMIDITY_REGISTER =             (0x02)
-HDC2000_CONFIG_REGISTER        =         (0x0E)
-HDC2000_MEAS_CONFIG_REGISTER =        (0x0F)
-HDC2000_MANUFACTURERID_REGISTER =       (0xFC)
-HDC2000_DEVICEID_REGISTER =         (0xFE)
+HDC20X0_TEMPERATURE_REGISTER =          (0x00)
+HDC20X0_HUMIDITY_REGISTER =             (0x02)
+HDC20X0_CONFIG_REGISTER        =         (0x0E)
+HDC20X0_MEAS_CONFIG_REGISTER =        (0x0F)
+HDC20X0_MANUFACTURERID_REGISTER =       (0xFC)
+HDC20X0_DEVICEID_REGISTER =         (0xFE)
 
 
 #Configuration Register Bits
 
-HDC2000_RESET_RESET_BIT =              (0x80)
-HDC2000_RESET_HEATER_ENABLE =          (0x8)
-HDC2000_CONFIG_GO =       (0x1)
+HDC20X0_RESET_RESET_BIT =              (0x80)
+HDC20X0_RESET_HEATER_ENABLE =          (0x8)
+HDC20X0_CONFIG_GO =       (0x1)
 
 I2C_SLAVE=0x0703
 
 import struct, array, time, io, fcntl
 
-HDC2000_fw= 0
-HDC2000_fr= 0
+HDC20X0_fw= 0
+HDC20X0_fr= 0
 
 class Hdc20x0:
 
         def readManufacturerID(self):
-            s = [HDC2000_MANUFACTURERID_REGISTER] 
-            HDC2000_fw.write( bytearray( s ) )
+            s = [HDC20X0_MANUFACTURERID_REGISTER] 
+            HDC20X0_fw.write( bytearray( s ) )
             time.sleep(0.0625)          
-            data = HDC2000_fr.read(2) #read 2 byte config data
+            data = HDC20X0_fr.read(2) #read 2 byte config data
             buf = array.array('B', data)
             return buf[0] * 256 + buf[1]
 
         def readDeviceID(self):
-            s = [HDC2000_DEVICEID_REGISTER] 
-            HDC2000_fw.write( bytearray( s ) )
+            s = [HDC20X0_DEVICEID_REGISTER] 
+            HDC20X0_fw.write( bytearray( s ) )
             time.sleep(0.0625)              
-            data = HDC2000_fr.read(2) #read 2 byte config data
+            data = HDC20X0_fr.read(2) #read 2 byte config data
             buf = array.array('B', data)
             return buf[0] * 256 + buf[1]
 
 
-        def __init__(self, twi=0, addr=HDC2000_ADDRESS ):
-                global HDC2000_fr, HDC2000_fw
+        def __init__(self, twi=0, addr=HDC20X0_ADDRESS ):
+                global HDC20X0_fr, HDC20X0_fw
                 
-                HDC2000_fr= io.open("/dev/i2c-"+str(twi), "rb", buffering=0)
-                HDC2000_fw= io.open("/dev/i2c-"+str(twi), "wb", buffering=0)
+                HDC20X0_fr= io.open("/dev/i2c-"+str(twi), "rb", buffering=0)
+                HDC20X0_fw= io.open("/dev/i2c-"+str(twi), "wb", buffering=0)
 
-                a1 = fcntl.ioctl(HDC2000_fr, I2C_SLAVE, HDC2000_ADDRESS)
-                a2 = fcntl.ioctl(HDC2000_fw, I2C_SLAVE, HDC2000_ADDRESS)
+                a1 = fcntl.ioctl(HDC20X0_fr, I2C_SLAVE, HDC20X0_ADDRESS)
+                a2 = fcntl.ioctl(HDC20X0_fw, I2C_SLAVE, HDC20X0_ADDRESS)
                 if (a1 <0 or a2 < 0):
                     exit() #abort
                 time.sleep(0.1) 
-                config = HDC2000_RESET_RESET_BIT
-                s = [HDC2000_CONFIG_REGISTER,config]
-                HDC2000_fw.write( bytearray( s ) ) 
+                config = HDC20X0_RESET_RESET_BIT
+                s = [HDC20X0_CONFIG_REGISTER,config]
+                HDC20X0_fw.write( bytearray( s ) ) 
                 time.sleep(0.1)             
                 if(self.readManufacturerID() != 0x4954):
                     print("ERROR CRITICAL MANUFACTURE ID NOT MATCH")
@@ -70,12 +70,12 @@ class Hdc20x0:
         # public functions
 
         def readTemperature(self):
-                s = [HDC2000_MEAS_CONFIG_REGISTER, HDC2000_CONFIG_GO ]
-                HDC2000_fw.write(bytearray(s)) #GO
-                s = [HDC2000_TEMPERATURE_REGISTER] # temp
-                HDC2000_fw.write(bytearray(s))
+                s = [HDC20X0_MEAS_CONFIG_REGISTER, HDC20X0_CONFIG_GO ]
+                HDC20X0_fw.write(bytearray(s)) #GO
+                s = [HDC20X0_TEMPERATURE_REGISTER] # temp
+                HDC20X0_fw.write(bytearray(s))
                 time.sleep(0.1)  #wait for measure to be done            
-                data = HDC2000_fr.read(2) 
+                data = HDC20X0_fr.read(2) 
                 buf = array.array('B', data)
                 
                 # Convert the data
@@ -85,21 +85,21 @@ class Hdc20x0:
 
 
         def readHumidity(self):
-                s = [HDC2000_MEAS_CONFIG_REGISTER, HDC2000_CONFIG_GO ]
-                HDC2000_fw.write(bytearray(s)) #GO
-                s = [HDC2000_HUMIDITY_REGISTER] #humidity
-                HDC2000_fw.write(bytearray(s))
+                s = [HDC20X0_MEAS_CONFIG_REGISTER, HDC20X0_CONFIG_GO ]
+                HDC20X0_fw.write(bytearray(s)) #GO
+                s = [HDC20X0_HUMIDITY_REGISTER] #humidity
+                HDC20X0_fw.write(bytearray(s))
                 time.sleep(0.1)              
-                data = HDC2000_fr.read(2) #read 2 byte humidity data
+                data = HDC20X0_fr.read(2) #read 2 byte humidity data
                 buf = array.array('B', data)
                 humidity = (buf[0]) + (buf[1]*256)
                 humidity = (humidity / 65536.0) * 100.0
                 return humidity
         
         def readConfigRegister(self):
-                s = [HDC2000_MEAS_CONFIG_REGISTER] # temp
-                HDC2000_fw.write( bytearray( s ) )
-                data = HDC2000_fr.read(1) #read 2 byte config data
+                s = [HDC20X0_MEAS_CONFIG_REGISTER] # temp
+                HDC20X0_fw.write( bytearray( s ) )
+                data = HDC20X0_fr.read(1) #read 2 byte config data
                 buf = array.array('B', data)
                 return buf[0]
 
