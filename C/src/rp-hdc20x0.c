@@ -29,9 +29,9 @@ static int file_i2c_handle =0;
 #define HDC20X0_DEVICEID_REGISTER         (0xFE)
 
 //bit configuration we actually care about
-#define HDC20X0_RESET_RESET_BIT              (0x80)
+#define HDC20X0_RESET_BIT              (0x80)
 #define HDC20X0_HEATER_ENABLE           (0x8)
-#define HDC20X0_CONFIG_GO        (0x1)
+#define HDC20X0_MEAS_GO        (0x1)
 
 #define NANO_MS_MULTIPLIER  1000000L;                // 1 millisecond = 1,000,000 Nanoseconds
 const int64_t INTERVAL_MS = NANO_MS_MULTIPLIER;
@@ -101,7 +101,7 @@ int setup_hdc20x0()
 	
 	uint8_t buff[4] = {};
 	buff[0] = HDC20X0_CONFIG_REGISTER; //register address
-	buff[1] = HDC20X0_RESET_RESET_BIT;//set high bit enable to reset. 
+	buff[1] = HDC20X0_RESET_BIT;//set high bit enable to reset. 
 	if(write(file_i2c_handle, buff, 2) != 2)
 	{
 		printf("Device failed to ACK the reset command\n");
@@ -124,7 +124,7 @@ int read_from_hdc20x0(float* temperature, float* humidity)
 {
 	uint8_t buff[4] = {};
 	buff[0] = HDC20X0_MEAS_CONFIG_REGISTER; 
-	buff[1] = HDC20X0_CONFIG_GO; 
+	buff[1] = HDC20X0_MEAS_GO; 
 	if(write(file_i2c_handle, buff, 2) != 2)
 	{
 		printf("Device failed to ACK the GO command\n");

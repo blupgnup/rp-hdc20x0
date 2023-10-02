@@ -14,9 +14,9 @@ HDC20X0_DEVICEID_REGISTER =         (0xFE)
 
 #Configuration Register Bits
 
-HDC20X0_RESET_RESET_BIT =              (0x80)
+HDC20X0_RESET_BIT =              (0x80)
 HDC20X0_HEATER_ENABLE =          (0x8)
-HDC20X0_CONFIG_GO =       (0x1)
+HDC20X0_MEAS_GO =       (0x1)
 
 I2C_SLAVE=0x0703
 
@@ -55,7 +55,7 @@ class Hdc20x0:
                 if (a1 <0 or a2 < 0):
                     exit() #abort
                 time.sleep(0.1) 
-                config = HDC20X0_RESET_RESET_BIT
+                config = HDC20X0_RESET_BIT
                 s = [HDC20X0_CONFIG_REGISTER,config]
                 HDC20X0_fw.write( bytearray( s ) ) 
                 time.sleep(0.1)             
@@ -70,7 +70,7 @@ class Hdc20x0:
         # public functions
 
         def readTemperature(self):
-                s = [HDC20X0_MEAS_CONFIG_REGISTER, HDC20X0_CONFIG_GO ]
+                s = [HDC20X0_MEAS_CONFIG_REGISTER, HDC20X0_MEAS_GO ]
                 HDC20X0_fw.write(bytearray(s)) #GO
                 s = [HDC20X0_TEMPERATURE_REGISTER] # temp
                 HDC20X0_fw.write(bytearray(s))
@@ -85,7 +85,7 @@ class Hdc20x0:
 
 
         def readHumidity(self):
-                s = [HDC20X0_MEAS_CONFIG_REGISTER, HDC20X0_CONFIG_GO ]
+                s = [HDC20X0_MEAS_CONFIG_REGISTER, HDC20X0_MEAS_GO ]
                 HDC20X0_fw.write(bytearray(s)) #GO
                 s = [HDC20X0_HUMIDITY_REGISTER] #humidity
                 HDC20X0_fw.write(bytearray(s))
