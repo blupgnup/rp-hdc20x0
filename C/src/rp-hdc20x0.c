@@ -139,6 +139,7 @@ int setup_hdc20x0()
 }
 
 
+//negative on error, positive on success
 int read_from_hdc20x0(float* temperature, float* humidity)
 {
 	uint8_t buff[4] = {};
@@ -166,8 +167,10 @@ int read_from_hdc20x0(float* temperature, float* humidity)
 		return -3;
 	}
 
+    temp_raw &= 0xFFFC; // Removing D1 and D0 which are reserved bit
+    humidity_raw &= 0xFFFC; // Removing D1 and D0 which are reserved bit
 	*temperature = (temp_raw/ 65536.0)  * 165.0-40.0;
-       	*humidity = (humidity_raw/65536.0) * 100.0;	
+    *humidity = (humidity_raw/65536.0) * 100.0;
 
 	return 0;
 }
