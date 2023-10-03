@@ -57,7 +57,7 @@ int read_from_address(uint8_t address, uint16_t* recv)
 }
 
 // private function, read register is similar to read from address but we get only one byte
-int read_register(uint8_t* recv)
+uint8_t read_register(uint8_t address, uint8_t* recv)
 {
 	uint8_t buff[4] = {};
 	buff[0] = HDC20X0_CONFIG_REGISTER;
@@ -173,4 +173,52 @@ int read_from_hdc20x0(float* temperature, float* humidity)
     *humidity = (humidity_raw/65536.0) * 100.0;
 
 	return 0;
+}
+
+// Turn on heater
+int turn_heater_on()
+{
+    uint8_t config;
+    if(read_register(HDC20X0_CONFIG_REGISTER,&config )!=0)
+	{
+		printf("Unable to read config register\n");
+		return -2;
+	}
+    // Using OR so that we only activate the Heater bit
+    config |= HDC20X0_HEATER_ENABLE;
+
+    uint8_t buff[4] = {};
+	buff[0] = HDC20X0_CONFIG_REGISTER; //register address
+	buff[1] = config;
+	if(write(file_i2c_handle, buff, 2) != 2)
+	{
+		printf("Device failed to ACK the reset command\n");
+		return -1;
+	}
+
+    return 0;
+}
+
+// Turn off heater
+int turn_heater_off()
+{
+    uint8_t config;
+    if(read_register(HDC20X0_CONFIG_REGISTER,&config )!=0)
+	{
+		printf("Unable to read config register\n");
+		return -2;
+	}
+    // Using OR so that we only activate the Heater bit
+    config &= ~HDC20X0_HEATER_ENABLE;
+
+    uint8_t buff[4] = {};
+	buff[0] = HDC20X0_CONFIG_REGISTER; //register address
+	buff[1] = config;
+	if(write(file_i2c_handle, buff, 2) != 2)
+	{
+		printf("Device failed to ACK the reset command\n");
+		return -1;
+	}
+
+    return 0;
 }
