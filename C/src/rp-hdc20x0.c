@@ -222,3 +222,71 @@ int turn_heater_off()
 
     return 0;
 }
+
+// Set temperature resolution
+int set_temperature_resolution(int resolution)
+{
+    uint8_t config;
+    if(read_register(HDC20X0_MEAS_CONFIG_REGISTER,&config )!=0)
+	{
+		printf("Unable to read config register\n");
+		return -2;
+	}
+    //  Setting resolution to default (High) because it is 0 for bits 7 and 6
+    config &= 0x3F; // Using a mask 0b00111111
+    // Using logic to update for medium or low resolution
+    switch( resolution ) {
+        case 2:
+            config |= 0x80;
+            break;
+        case 1:
+            config |= 0x40;
+            break;
+        // Default not needed, if no case matches, we keep High resolution
+    }
+
+    uint8_t buff[4] = {};
+	buff[0] = HDC20X0_MEAS_CONFIG_REGISTER; //register address
+	buff[1] = config;
+	if(write(file_i2c_handle, buff, 2) != 2)
+	{
+		printf("Device failed to ACK the reset command\n");
+		return -1;
+	}
+
+    return 0;
+}
+
+// Set humidity resolution
+int set_humidity_resolution(int resolution)
+{
+    uint8_t config;
+    if(read_register(HDC20X0_MEAS_CONFIG_REGISTER,&config )!=0)
+	{
+		printf("Unable to read config register\n");
+		return -2;
+	}
+    //  Setting resolution to default (High) because it is 0 for bits 7 and 6
+    config &= 0xCF; // Using a mask 0b00111111
+    // Using logic to update for medium or low resolution
+    switch( resolution ) {
+        case 2:
+            config |= 0x20;
+            break;
+        case 1:
+            config |= 0x10;
+            break;
+        // Default not needed, if no case matches, we keep High resolution
+    }
+
+    uint8_t buff[4] = {};
+	buff[0] = HDC20X0_MEAS_CONFIG_REGISTER; //register address
+	buff[1] = config;
+	if(write(file_i2c_handle, buff, 2) != 2)
+	{
+		printf("Device failed to ACK the reset command\n");
+		return -1;
+	}
+
+    return 0;
+}

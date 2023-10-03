@@ -23,10 +23,21 @@ int turn_heater_on();
 int turn_heater_off();
 
 // Set temperature resolution
-int set_temperature_resolution(char resolution);
+// Note that this only affects the conversion speed
+// LSBs are not controlled and should be masked when reading value
+int set_temperature_resolution(int resolution);
+    // 0 : High resolution
+    // 1 : Medium resolution
+    // 2 : Low resolution
+
 
 // Set humidity resolution
-int set_temperature_resolution(char resolution);
+// Note that this only affects the conversion speed
+// LSBs are not controlled and should be masked when reading value
+int set_humidity_resolution(int resolution);
+    // 0 : High resolution
+    // 1 : Medium resolution
+    // 2 : Low resolution
 
 
 #ifdef __cplusplus
