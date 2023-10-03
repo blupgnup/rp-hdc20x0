@@ -70,7 +70,9 @@ class Hdc20x0:
         # public functions
 
         def readTemperature(self):
-                s = [HDC20X0_MEAS_CONFIG_REGISTER, HDC20X0_MEAS_GO ]
+                config = self.readMeasConfigRegister()
+                config = config | HDC20X0_MEAS_GO # Adding existing configuration register to avoid overriding parameters
+                s = [HDC20X0_MEAS_CONFIG_REGISTER, config ]
                 HDC20X0_fw.write(bytearray(s)) #GO
                 s = [HDC20X0_TEMPERATURE_REGISTER] # temp
                 HDC20X0_fw.write(bytearray(s))
@@ -79,19 +81,25 @@ class Hdc20x0:
                 buf = array.array('B', data)
                 
                 # Convert the data
-                temp = (buf[0]) + (buf[1]*256)
+                # We add a mask to set D1 and D0 bits to 0 as recommended by TI
+                temp = (buf[0] & (0xFC)) + (buf[1]*256)
                 cTemp = (temp / 65536.0) * 165.0 - 40
                 return cTemp
 
         def readHumidity(self):
-                s = [HDC20X0_MEAS_CONFIG_REGISTER, HDC20X0_MEAS_GO ]
+                config = self.readMeasConfigRegister()
+                config = config | HDC20X0_MEAS_GO # Adding existing configuration register to avoid overriding parameters
+                s = [HDC20X0_MEAS_CONFIG_REGISTER, config ]
                 HDC20X0_fw.write(bytearray(s)) #GO
                 s = [HDC20X0_HUMIDITY_REGISTER] #humidity
                 HDC20X0_fw.write(bytearray(s))
                 time.sleep(0.1)              
                 data = HDC20X0_fr.read(2) #read 2 byte humidity data
                 buf = array.array('B', data)
-                humidity = (buf[0]) + (buf[1]*256)
+
+                # Convert the data
+                # We add a mask to set D1 and D0 bits to 0 as recommended by TI
+                humidity = (buf[0] & (0xFC)) + (buf[1]*256)
                 humidity = (humidity / 65536.0) * 100.0
                 return humidity
         
@@ -125,30 +133,30 @@ class Hdc20x0:
                 HDC20X0_fw.write( bytearray( s ) ) 
                 return
 
-        def setHumidityResolution(self,resolution):
+        def setHumidityResolution(self,resolution="high"):
                 config = self.readMeasConfigRegister()
                 # Setting resolution to default (High) because it is 0 for bits 7 and 6
                 config = config & (0xCF) # Using a mask 0b11001111
                 # Using Logic to update for medium or low resolution
                 if resolution == 'medium':
-                    config = config & (0x10)
+                    config = config | (0x10)
                 elif resolution == 'low':
-                    config = config & (0x20)
+                    config = config | (0x20)
                 # in case of error, we keep high resolution active
                 
                 s = [HDC20X0_MEAS_CONFIG_REGISTER,config]
                 HDC20X0_fw.write( bytearray( s ) ) 
                 return
 
-        def setTemperatureResolution(self,resolution):
+        def setTemperatureResolution(self,resolution="high"):
                 config = self.readMeasConfigRegister()
                 # Setting resolution to default (High) because it is 0 for bits 7 and 6
                 config = config & (0x3F) # Using a mask 0b00111111
                 # Using Logic to update for medium or low resolution
                 if resolution == 'medium':
-                    config = config & (0x40)
+                    config = config | (0x40)
                 elif resolution == 'low':
-                    config = config & (0x80)
+                    config = config | (0x80)
                 # in case of error, we keep high resolution active
                 
                 s = [HDC20X0_MEAS_CONFIG_REGISTER,config]
