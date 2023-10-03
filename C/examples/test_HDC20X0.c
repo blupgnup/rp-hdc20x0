@@ -15,7 +15,7 @@ int main()
 		sleep(1);
 	}
     
-    if(turn_heater_on() != 0 ) {
+    if(hdc20x0_heater_on() != 0 ) {
         printf("Unable to turn heater on");
         return -3;
     }
@@ -28,7 +28,7 @@ int main()
 		sleep(1);
 	}
     
-    if(turn_heater_off() != 0 ) {
+    if(hdc20x0_heater_off() != 0 ) {
         printf("Unable to turn heater on");
         return -3;
     }    

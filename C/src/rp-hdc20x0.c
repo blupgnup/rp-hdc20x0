@@ -176,7 +176,7 @@ int read_from_hdc20x0(float* temperature, float* humidity)
 }
 
 // Turn on heater
-int turn_heater_on()
+int hdc20x0_heater_on()
 {
     uint8_t config;
     if(read_register(HDC20X0_CONFIG_REGISTER,&config )!=0)
@@ -200,7 +200,7 @@ int turn_heater_on()
 }
 
 // Turn off heater
-int turn_heater_off()
+int hdc20x0_heater_off()
 {
     uint8_t config;
     if(read_register(HDC20X0_CONFIG_REGISTER,&config )!=0)
@@ -224,7 +224,7 @@ int turn_heater_off()
 }
 
 // Set temperature resolution
-int set_temperature_resolution(int resolution)
+int set_temperature_resolution_hdc20x0(int resolution)
 {
     uint8_t config;
     if(read_register(HDC20X0_MEAS_CONFIG_REGISTER,&config )!=0)
@@ -258,7 +258,7 @@ int set_temperature_resolution(int resolution)
 }
 
 // Set humidity resolution
-int set_humidity_resolution(int resolution)
+int set_humidity_resolution_hdc20x0(int resolution)
 {
     uint8_t config;
     if(read_register(HDC20X0_MEAS_CONFIG_REGISTER,&config )!=0)

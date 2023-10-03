@@ -17,15 +17,15 @@ int setup_hdc20x0();
 int read_from_hdc20x0(float * temperature, float * humidity);
 
 // Turn on heater
-int turn_heater_on();
+int hdc20x0_heater_on();
 
 // Turn off heater
-int turn_heater_off();
+int hdc20x0_heater_off();
 
 // Set temperature resolution
 // Note that this only affects the conversion speed
 // LSBs are not controlled and should be masked when reading value
-int set_temperature_resolution(int resolution);
+int set_temperature_resolution_hdc20x0(int resolution);
     // 0 : High resolution
     // 1 : Medium resolution
     // 2 : Low resolution
@@ -34,7 +34,7 @@ int set_temperature_resolution(int resolution);
 // Set humidity resolution
 // Note that this only affects the conversion speed
 // LSBs are not controlled and should be masked when reading value
-int set_humidity_resolution(int resolution);
+int set_humidity_resolution_hdc20x0(int resolution);
     // 0 : High resolution
     // 1 : Medium resolution
     // 2 : Low resolution
